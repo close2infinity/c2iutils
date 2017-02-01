@@ -51,7 +51,6 @@ public class Tuple2<T1, T2> {
         return Collectors.toMap(Tuple2::element1, Tuple2::element2);
     }
 
-
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) {
