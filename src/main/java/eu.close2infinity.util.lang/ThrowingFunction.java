@@ -1,4 +1,4 @@
-package eu.close2infinity.util.lang
+package eu.close2infinity.util.lang;
 
 import java.util.function.Function;
 
@@ -23,6 +23,14 @@ public interface ThrowingFunction<A, R> extends Function<A, R> {
 		}
 	}
 
+    default <E extends Exception> Either<R, E> tryApply(A a) {
+	   try {
+			return Either.ofLeft(applyThrowing(a));
+		} catch (Exception e) {
+	       return Either.ofRight((E) e);
+		}
+    }
+
 	R applyThrowing(A a) throws Exception;
 
 	/**
@@ -36,4 +44,8 @@ public interface ThrowingFunction<A, R> extends Function<A, R> {
 	static <A, R> ThrowingFunction<A, R> maybeThrowing(ThrowingFunction<A, R> f) {
 		return f;
 	}
+
+    static <A, R, E extends Exception> Either<R, E> tryFor(A arg, ThrowingFunction<A, R> f) {
+	    return f.tryApply(arg);
+    }
 }
