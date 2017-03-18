@@ -2,6 +2,8 @@ package eu.close2infinity.util.lang;
 
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
+
 public interface Either<L, R> {
 
     Optional<L> left();
@@ -20,6 +22,7 @@ public interface Either<L, R> {
         private final L left;
 
         private Left(L left) {
+            Preconditions.checkArgument(left != null, "left == null");
             this.left = left;
         }
 
@@ -37,8 +40,9 @@ public interface Either<L, R> {
      class Right<L, R> implements Either<L, R> {
         private final R right;
 
-        private Right(R left) {
-            this.right = left;
+         private Right(R right) {
+            Preconditions.checkArgument(right != null, "right == null");
+            this.right = right;
         }
 
         @Override

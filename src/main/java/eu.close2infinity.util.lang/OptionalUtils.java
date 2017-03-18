@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /**
  * Utility methods for Java 8 {@link com.google.common.base.Optional}.
  */
-@SuppressWarnings("Guava")
+@SuppressWarnings({ "Guava", "OptionalUsedAsFieldOrParameterType" })
 public class OptionalUtils {
 
     /**

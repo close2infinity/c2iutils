@@ -1,6 +1,7 @@
 package eu.close2infinity.util.lang;
 
-import java.util.Optional;
+import static eu.close2infinity.util.lang.ThrowingConsumer.VoidValue.VOID;
+
 import java.util.function.Consumer;
 
 /**
@@ -13,9 +14,9 @@ import java.util.function.Consumer;
 public interface ThrowingConsumer<A> extends Consumer<A> {
 
 	@Override
-	default void accept(A arg) {
+	default void accept(A a) {
 		try {
-			acceptThrowing(arg);
+			acceptThrowing(a);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -23,14 +24,23 @@ public interface ThrowingConsumer<A> extends Consumer<A> {
 		}
 	}
 
-    default <E extends Exception> Optional<E> tryAccept(A arg) {
-		try {
-			acceptThrowing(arg);
-			return Optional.empty();
-		} catch (Exception e) {
+    /**
+     * Evaluates the function but returns a functional Either depending on the
+     * outcome.
+     *
+     * @param a the argument
+     *
+     * @return an Either holding the (void) return value on the left side or any
+     * exception thrown during evaluation on the right side.
+     */
+    default <E extends Exception> Either<VoidValue, E> tryAccept(A a) {
+        try {
+			acceptThrowing(a);
+            return Either.ofLeft(VOID);
+        } catch (Exception e) {
             //noinspection unchecked
-            return Optional.of((E) e);
-		}
+            return Either.ofRight((E) e);
+        }
     }
 
 	void acceptThrowing(A a) throws Exception;
@@ -45,9 +55,13 @@ public interface ThrowingConsumer<A> extends Consumer<A> {
 	 */
 	static <A> ThrowingConsumer<A> maybeThrowing(ThrowingConsumer<A> f) {
 		return f;
-	}
+    }
 
-    static <A, E extends Exception> Optional<E> tryFor(A arg, ThrowingConsumer<A> f) {
+    static <A, E extends Exception> Either<VoidValue, E> tryFor(A arg, ThrowingConsumer<A> f) {
         return f.tryAccept(arg);
+    }
+
+    enum VoidValue {
+        VOID
     }
 }

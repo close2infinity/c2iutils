@@ -23,8 +23,17 @@ public interface ThrowingFunction<A, R> extends Function<A, R> {
 		}
 	}
 
+    /**
+     * Evaluates the function but returns a functional Either depending on the
+     * outcome.
+     *
+     * @param a the argument
+     *
+     * @return an Either holding the return value on the left side or any
+     * exception thrown during evaluation on the right side.
+     */
     default <E extends Exception> Either<R, E> tryApply(A a) {
-	   try {
+        try {
 			return Either.ofLeft(applyThrowing(a));
 		} catch (Exception e) {
 	       return Either.ofRight((E) e);
